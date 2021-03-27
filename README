@@ -1,1 +1,5 @@
 making my own os from scratch inspired by Nick Blundell paper on how to write an os
+
+to run:
+  1. install qemu
+  2. run qemu <bin file> (if this doesn't work run qemu-system-x86_64 <bin file>
