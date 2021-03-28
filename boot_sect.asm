@@ -10,9 +10,13 @@ call print
 
 call print_nl
 
+mov dx, 0x12fe
+call print_hex
+
 jmp $
 
 %include "boot_sect_print.asm"
+%include "boot_sect_print_hex.asm"
 
 HELLO:
   db 'Hello, World',0
