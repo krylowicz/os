@@ -1,28 +1,37 @@
-[org 0x7c00] 
-; defining global offset 
-; without this 3rd attempt works and with this set now the 2nd one works
-; because it now calculates offstet from the beginning of the boot sector
-
 mov ah, 0x0e ; tty mode
 
-; fails because it tries to print memory addres of secret (pointer)
-mov al, secret
+mov bp, 0x8000 ; initializing the stack far away fom 0x7c00
+mov sp, bp ; if the stack is empty then sp points to bp
+
+push 'A'
+push 'B'
+push 'C'
+
+mov al, [0x7ffe] ; 0x8000 - 0x2 (the stack grows downwards)
 int 0x10
 
-; this dereferences secret (like *pointer in c)
-mov al, [secret]
+mov al, [0x8000]
+int 0x10 ; this won't work, only accessing stack top is valid
+
+; we can pop only full words (unit of data used by cpu)
+; so we need aux register to set the lower bytes
+pop bx
+mov al, bl
 int 0x10
 
-; add the BIOS starting offset 0x7c00 to the memory addres of secret
-mov bx, secret
-add bx, 0x7c00
-mov al, [bx]
+pop bx
+mov al, bl
 int 0x10
 
-jmp $ ; infinite loop
+pop bx
+mov al, bl
+int 0x10
 
-secret:
-  db 'X' ; ASCII 'X' is stored just before zero padding
+; data that has been popped from the stack is garbage now
+mov al, [0x8000]
+int 0x10
+
+jmp $
 
 ; zero padding and boot sector number
 times 510-($-$$) db 0
