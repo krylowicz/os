@@ -1,6 +1,5 @@
 print_hex
   pusha
-
   mov cx, 0
 
 hex_loop:
@@ -8,7 +7,7 @@ hex_loop:
   je end
 
   ; convert last digit of dx to ascii
-  mov ax, dx ; as is working register
+  mov ax, dx ; ax is working register
   and ax, 0x000f ; 0x1234 -> 0x0004
   add al, 0x30 ; add 0x30 to convert to ascii
   cmp al, 0x39 ; if > 9 add extra 8 for 'A' to 'F'
