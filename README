@@ -6,7 +6,7 @@ to run:
 
 todo:
   - [x] boot without grub
-  - [] 32-bit mode
+  - [x] 32-bit mode
   - [] assembly to c jump
   - [] interrupt handling
   - [] screen output and keyboard input
