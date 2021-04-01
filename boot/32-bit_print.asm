@@ -12,7 +12,7 @@ print_string_pm_loop:
   mov al, [ebx] ; store the char at ebx to in al
   mov ah, WHITE_ON_BLACK ; store the attribute in ah
 
-  cmp ah, 0 ; if al == 0 happens and the end of string
+  cmp al, 0 ; if al == 0 happens and the end of string
   je print_string_pm_done
 
   mov [edx], ax ; store char and atributes at current char cell

@@ -3,7 +3,7 @@ print:
 
 ; while (string[i] != 0) { print(string[i] i++ }
 start:
-  ; comparison  
+  ; comparison
   mov al, [bx] ; bx is base address of string
   cmp al, 0
   je done
