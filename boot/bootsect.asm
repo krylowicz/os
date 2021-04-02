@@ -9,15 +9,15 @@ KERNEL_OFFSET equ 0x1000
   call print_nl
 
   call load_kernel ; read the kernel from disk
-  call switch_to_pm ; disable interrupts, load GDT,  etc. Finally jumps to 'BEGIN_PM'
+  call switch_to_pm ; disable BIOS, load GDT 
   jmp $ ; Never executed
 
-%include "boot_sect_print.asm"
-%include "boot_sect_print_hex.asm"
-%include "boot_sect_disk.asm"
-%include "32-bit_gdt.asm"
+%include "print.asm"
+%include "print_hex.asm"
+%include "disk.asm"
+%include "gdt.asm"
 %include "32-bit_print.asm"
-%include "32-bit_switch.asm"
+%include "switch_pm.asm"
 
 [bits 16]
 load_kernel:
