@@ -8,8 +8,8 @@
   - [x] boot without grub
   - [x] 32-bit mode
   - [x] assembly to c jump
-  - [] interrupt handling
-  - [] screen output and keyboard input
-  - [] memory management
-  - [] filesystem
-  - [] shell
+  - [ ] interrupt handling
+  - [ ] screen output and keyboard input
+  - [ ] memory management
+  - [ ] filesystem
+  - [ ] shell
