@@ -2,7 +2,7 @@
 
 ## To run
   1. Use makefile
-  2. Run qemu <bin file> (if this doesn't work run qemu-system-x86_64 <bin file>
+  2. Run qemu <bin file> (if this doesn't work run qemu-system-x86_64 <bin file>)
 
 ## Features:
   - [x] boot without grub

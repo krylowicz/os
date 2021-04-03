@@ -12,12 +12,12 @@ KERNEL_OFFSET equ 0x1000
   call switch_to_pm ; disable BIOS, load GDT 
   jmp $ ; Never executed
 
-%include "print.asm"
-%include "print_hex.asm"
-%include "disk.asm"
-%include "gdt.asm"
-%include "32-bit_print.asm"
-%include "switch_pm.asm"
+%include "boot/print.asm"
+%include "boot/print_hex.asm"
+%include "boot/disk.asm"
+%include "boot/gdt.asm"
+%include "boot/32-bit_print.asm"
+%include "boot/switch_pm.asm"
 
 [bits 16]
 load_kernel:
@@ -37,7 +37,6 @@ BEGIN_PM:
   call print_string_pm
   call KERNEL_OFFSET ; hand control to the kernel
   jmp $ ; stay here when kernel returns (if ever)
-
 
 BOOT_DRIVE db 0
 MSG_REAL_MODE db "Started in 16-bit Real Mode", 0
