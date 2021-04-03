@@ -10,8 +10,23 @@ int get_offset_row(int offset);
 int get_offset_col(int offset);
 
 // public functions
-void kprint_at() {
-  // TODO - print message on specific location
+void kprint_at(char *msg, int col, int row) {
+  int offset;
+
+  if (col >= 0 && row >= 0) {
+    offset = get_offset(col, row);
+  } else {
+    offset = get_cursor_offset();
+    col = get_offset_col(offset);
+    row = get_offset_row(offset);
+  }
+
+  int i = 0;
+  while (msg[i] != 0) {
+    offset = print_char(msg[i++], col, row, WHITE_ON_BLACK);
+    col = get_offset_col(offset);
+    row = get_offset_row(offset);
+  }
 }
 
 void kprint(char *msg) {
@@ -58,8 +73,12 @@ int get_cursor_offset() {
   return offset * 2; // pos * size
 }
 
-void set_cursor_offset() {
-
+void set_cursor_offset(offset) {
+  offset /= 2; // pos and size / 2
+  port_byte_out(REG_SCREEN_CTRL, 14);
+  port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
+  port_byte_out(REG_SCREEN_CTRL, 15);
+  port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
 }
 
 void clear_screen() {
@@ -67,7 +86,7 @@ void clear_screen() {
   char *screen = VIDEO_ADDRESS;
 
   for (int i = 0; i < screen_size; i++) {
-    screen[i*2] = '';
+    screen[i*2] = ' ';
     screen[i*2+1] = WHITE_ON_BLACK;
   }
 
@@ -82,7 +101,7 @@ int get_offset_row(int offset) {
   return offset / (2 * MAX_COLS);
 }
 
-int get_offset_cols(int offset) {
+int get_offset_col(int offset) {
   return (offset - (get_offset_row(offset) * 2 * MAX_COLS)) / 2;
 }
 
