@@ -1,8 +1,8 @@
 # Making my own os from scratch inspired by Nick Blundells [paper](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 
 ## To run
-  1. Use makefile
-  2. Run qemu <bin file> (if this doesn't work run qemu-system-x86_64 <bin file>)
+  1. `make`
+  2. `make run`
 
 ## Features:
   - [x] boot without grub

@@ -1,3 +1,3 @@
 void f() {
-  char* string = "Hello";
+  char *string = "Hello";
 }
