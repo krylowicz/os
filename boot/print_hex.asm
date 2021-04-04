@@ -1,4 +1,4 @@
-print_hex
+print_hex:
   pusha
   mov cx, 0
 
