@@ -1,126 +1,92 @@
+#include "stdint.h"
 #include "screen.h"
 #include "ports.h"
 #include "../kernel/utils.h"
 
-// private functions declaration
-int get_cursor_offset();
-void set_cursor_offset(int offset);
-int print_char(char c, int col, int row, char attr);
-int get_offset(int col, int row);
-int get_offset_row(int offset);
-int get_offset_col(int offset);
-int handle_offset(int offset);
-
-// public functions
-void kprint_at(char *msg, int col, int row) {
-  int offset;
-
-  if (col >= 0 && row >= 0) {
-    offset = get_offset(col, row);
-  } else {
-    offset = get_cursor_offset();
-    col = get_offset_col(offset);
-    row = get_offset_row(offset);
-  }
-
-  int i = 0;
-  while (msg[i] != 0) {
-    offset = print_char(msg[i++], col, row, WHITE_ON_BLACK);
-    col = get_offset_col(offset);
-    row = get_offset_row(offset);
-  }
-}
-
-void kprint(char *msg) {
-  kprint_at(msg, -1, -1);
-}
-
-// private functions
-/*
-  if col and rows < 0, print at cursor position
-  if attr == 0, use white on black
-  returns offset of the next char
-  sets the cursor to the returned offset
-*/
-int print_char(char c, int col, int row, char attr) {
-  unsigned char *vidmem = VIDEO_ADDRESS;
-  if (!attr) attr = WHITE_ON_BLACK;
-
-  int offset;
-  if (col >= 0 && row >= 0) {
-    offset = get_offset(col, row);
-  } else {
-    offset = get_cursor_offset();
-  }
-
-  if (c == '\n') {
-    row = get_offset_row(offset);
-    offset = get_offset(0, row + 1);
-  } else {
-    vidmem[offset] = c;
-    vidmem[offset + 1] = attr;
-    offset += 2;
-  }
-
-  offset = handle_scroll(offset);
-
-  set_cursor_offset(offset);
-  return offset;
-}
-
-// use VGA ports to get current cursor pos
-int get_cursor_offset() {
-  port_byte_out(REG_SCREEN_CTRL, 14);
-  int offset = port_byte_in(REG_SCREEN_DATA) << 8;
-  port_byte_out(REG_SCREEN_CTRL, 15);
-  offset += port_byte_in(REG_SCREEN_DATA);
-  return offset * 2; // pos * size
-}
-
-void set_cursor_offset(offset) {
-  offset /= 2; // pos and size / 2
+void set_cursor(int offset) {
+  offset /= 2;
   port_byte_out(REG_SCREEN_CTRL, 14);
   port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
   port_byte_out(REG_SCREEN_CTRL, 15);
   port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
 }
 
-void clear_screen() {
-  int screen_size = MAX_COLS * MAX_ROWS;
-  char *screen = VIDEO_ADDRESS;
-
-  for (int i = 0; i < screen_size; i++) {
-    screen[i*2] = ' ';
-    screen[i*2+1] = WHITE_ON_BLACK;
-  }
-
-  set_cursor_offset(get_offset(0,0));
+int get_cursor() {
+  port_byte_out(REG_SCREEN_CTRL, 14);
+  int offset = port_byte_in(REG_SCREEN_DATA) << 8;
+  port_byte_out(REG_SCREEN_CTRL, 15);
+  offset += port_byte_in(REG_SCREEN_DATA);
+  return offset * 2;
 }
 
 int get_offset(int col, int row) {
   return 2 * (row * MAX_COLS + col);
 }
 
-int get_offset_row(int offset) {
+int get_row_from_offset(int offset) {
   return offset / (2 * MAX_COLS);
 }
 
-int get_offset_col(int offset) {
-  return (offset - (get_offset_row(offset) * 2 * MAX_COLS)) / 2;
+int move_offset_nl(int offset) {
+  return get_offset(0, get_row_from_offset(offset) + 1);
 }
 
-int handle_scroll(int offset) {
-  if (offset < MAX_ROWS * MAX_COLS * 2)
-    return offset;
+void print_char_at(char character, int offset) {
+  uint8_t *vidmem = VIDEO_ADDRESS;
+  vidmem[offset] = character;
+  vidmem[offset + 1] = WHITE_ON_BLACK;
+}
 
-  for (int i = 1; i < MAX_ROWS; i++)
-    mem_copy(get_offset(0,i) + VIDEO_ADDRESS, get_offset(0,i-1) + VIDEO_ADDRESS, MAX_COLS * 2);
+int scroll_ln(int offset) {
+  mem_copy(get_offset(0,1) + VIDEO_ADDRESS, 
+           get_offset(0,0) + VIDEO_ADDRESS, 
+           MAX_COLS * (MAX_ROWS - 1) * 2
+  );
 
-  char *last_line = get_offset(0,MAX_ROWS-1) + VIDEO_ADDRESS;
-  for (int i = 0; i < MAX_COLS * 2; i++)
-    last_line[i] = 0;
+  for (int i = 0; i < MAX_COLS; i++)
+    print_char_at(' ', get_offset(i, MAX_ROWS - 1));
 
-  offset -= 2 * MAX_COLS;
-  return offset;
+  return offset - 2 * MAX_COLS;
+}
+
+void print_string(char *string) {
+  int offset = get_cursor();
+  int i = 0;
+  while (string[i] != 0) {
+    if (offset >= MAX_ROWS * MAX_COLS * 2) {
+      offset = scroll_ln(offset);
+    }
+
+    if (string[i] == '\n') {
+      offset = move_offset_nl(offset);
+    } else {
+      print_char_at(string[i], offset);
+      offset += 2;
+    }
+    i++;
+  }
+  set_cursor(offset);
+}
+
+void print_nl() {
+  int offset = move_offset_nl(get_cursor());
+  if (offset >= MAX_ROWS * MAX_COLS * 2)
+    offset = scroll_ln(offset);
+
+  set_cursor(offset);
+}
+
+void clear_screen() {
+  int screen_size = MAX_COLS * MAX_ROWS;
+  for (int i = 0; i < screen_size; i++) 
+    print_char_at(' ', i * 2);
+
+  set_cursor(get_offset(0, 0));
+}
+
+void print_backspace() {
+  int cursor = get_cursor() - 2;
+  print_char_at(' ', cursor);
+  set_cursor(cursor);
 }
 

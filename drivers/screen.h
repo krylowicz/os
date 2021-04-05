@@ -1,3 +1,5 @@
+#pragma once
+
 #define VIDEO_ADDRESS 0xb8000
 #define MAX_ROWS 25
 #define MAX_COLS 80
@@ -6,7 +8,8 @@
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 
+void print_string(char *string);
+void print_nl();
 void clear_screen();
-void kprint_at(char *msg, int col, int row);
-void kprint(char *msg);
-
+int scroll_ln(int offset);
+void print_backspace();
