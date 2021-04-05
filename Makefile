@@ -3,7 +3,7 @@ HEADERS = $(wildcard kernel/*.h drivers/*.h)
 OBJ = ${C_SOURCES:.c=.o}
 
 CC = /usr/local/bin/i386-elf-gcc
-GDB = # set this later 
+GDB = /usr/local/bin/i386-elf-gdb 
 CFLAGS = -g
 
 os-image.bin: boot/bootsect.bin kernel.bin
