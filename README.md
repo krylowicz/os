@@ -1,8 +1,4 @@
-# Making my own os from scratch inspired by Nick Blundells [paper](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
-
-## To run
-  1. `make`
-  2. `make run`
+# Making my own operarting system from scratch
 
 ## Features:
   - [x] boot without grub
@@ -13,3 +9,9 @@
   - [ ] memory management
   - [ ] filesystem
   - [ ] shell
+
+## Sources
+  - [this paper](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
+  - [JamesM tutorials](https://web.archive.org/web/20160412174753/http://www.jamesmolloy.co.uk/tutorial_html/index.html)
+  - [little book about OS development](https://littleosbook.github.io)
+  - [OSDev wiki](https://wiki.osdev.org/Main_Page)
