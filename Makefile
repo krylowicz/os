@@ -3,14 +3,17 @@ HEADERS = $(wildcard kernel/*.h drivers/*.h)
 OBJ = ${C_SOURCES:.c=.o}
 
 CC = /usr/local/bin/i386-elf-gcc
-GDB = /usr/local/bin/i386-elf-gdb 
+GDB = /usr/local/bin/i386-elf-gdb
+LD = /usr/local/bin/i386-elf-ld
 CFLAGS = -g
+
+all: run
 
 os-image.bin: boot/bootsect.bin kernel.bin
 	cat $^ > os-image.bin
 
 kernel.bin: boot/kernel_entry.o ${OBJ}
-	i386-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
+	${LD} -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
 
 kernel.elf: boot/kernel_entry.o ${OBJ}
 	i386-elf-ld -o $@ -Ttext 0x1000 $^ 

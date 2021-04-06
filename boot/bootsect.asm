@@ -10,7 +10,7 @@ KERNEL_OFFSET equ 0x1000
 
   call load_kernel ; read the kernel from disk
   call switch_to_pm ; disable BIOS, load GDT 
-  jmp $ ; Never executed
+  jmp $
 
 %include "boot/print.asm"
 %include "boot/print_hex.asm"
@@ -26,7 +26,7 @@ load_kernel:
   call print_nl
 
   mov bx, KERNEL_OFFSET ; read from disk and store in 0x1000
-  mov dh, 16
+  mov dh, 31
   mov dl, [BOOT_DRIVE]
   call disk_load
   ret
