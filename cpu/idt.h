@@ -2,7 +2,6 @@
 #include <stdint.h>
 
 #define KERNEL_CS 0x08
-#define IDT_ENTRIES 265
 
 typedef struct {
   uint16_t low_offset;
@@ -10,7 +9,7 @@ typedef struct {
   uint8_t unused;
   uint8_t flags;
   uint16_t high_offset;
-} __attribute__((packed)) idt_desc_t; // keeps it aligned
+} __attribute__((packed)) idt_gate_t; // keeps it aligned
 
 // points to interript descriptor array
 typedef struct {
@@ -18,6 +17,6 @@ typedef struct {
   uint32_t base; // address of idt
 } __attribute__((packed)) idtr_t;
 
-void set_idt_desc(int n, uint32_t handler);
+void set_idt_gate(int n, uint32_t handler);
 void load_idt();
 

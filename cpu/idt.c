@@ -1,9 +1,10 @@
 #include "idt.h"
+#include "../kernel/utils.h"
 
-idt_desc_t idt_desc[IDT_ENTRIES];
+idt_gate_t idt_desc[256];
 idtr_t idtr;
 
-void set_idt_desc(int n, uint32_t handler) {
+void set_idt_gate(int n, uint32_t handler) {
   idt_desc[n].low_offset = low_16(handler);
   idt_desc[n].selector = KERNEL_CS;
   idt_desc[n].unused = 0;
@@ -13,6 +14,6 @@ void set_idt_desc(int n, uint32_t handler) {
 
 void load_idt() {
   idtr.base = &idt_desc;
-  idtr.limit = IDT_ENTRIES * sizeof(idt_desc_t) - 1;
+  idtr.limit = 256 * sizeof(idt_desc) - 1;
   asm volatile("lidt (%0)" : : "r" (&idtr));
 }
