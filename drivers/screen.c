@@ -1,7 +1,8 @@
-#include "stdint.h"
 #include "screen.h"
-#include "ports.h"
-#include "../kernel/utils.h"
+#include "../cpu/ports.h"
+#include "../libc/mem.h"
+#include "../libc/string.h"
+#include "stdint.h"
 
 void set_cursor(int offset) {
   offset /= 2;
@@ -38,9 +39,9 @@ void print_char_at(char character, int offset) {
 }
 
 int scroll_ln(int offset) {
-   mem_copy(get_offset(0,1) + VIDEO_ADDRESS,
-            get_offset(0,0) + VIDEO_ADDRESS,
-            MAX_COLS * (MAX_ROWS - 1) * 2
+  mem_copy(get_offset(0,1) + VIDEO_ADDRESS,
+           get_offset(0,0) + VIDEO_ADDRESS,
+           MAX_COLS * (MAX_ROWS - 1) * 2
   );
 
   for (int i = 0; i < MAX_COLS; i++) {

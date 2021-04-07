@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include "ports.h"
+#include "../cpu/ports.h"
 #include "screen.h"
-#include "../kernel/utils.h"
+#include "../libc/string.h"
 #include "../cpu/isr.h"
 
 #define SC_MAX 57

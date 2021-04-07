@@ -1,7 +1,6 @@
 #include "../cpu/idt.h"
 #include "../cpu/isr.h"
 #include "../drivers/screen.h"
-#include "utils.h"
 
 void main() {
   clear_screen();
