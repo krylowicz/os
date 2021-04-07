@@ -10,5 +10,11 @@ void main() {
 
   print_string("enabling external interrupts\n");
   asm volatile("sti");
+
+  print_string("initializing keyboard\n");
+  init_keyboard();
+
+  clear_screen();
+  print_string(":: ");
 }
 
