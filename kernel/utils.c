@@ -1,5 +1,5 @@
 void execute(char *input) {
-  if (compare_string(input, "EXIT") == 0) {
+  if (compare_string(input, "exit") == 0) {
     print_string("Exiting..\n");
     asm volatile("hlt");
   }

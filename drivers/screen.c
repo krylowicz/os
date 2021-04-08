@@ -87,8 +87,8 @@ void clear_screen() {
 }
 
 void print_backspace() {
-  int cursor = get_cursor() - 2;
-  print_char_at(' ', cursor);
-  set_cursor(cursor);
+  set_cursor(get_cursor() - 2);
+  print_string(" ");
+  set_cursor(get_cursor() - 2);
 }
 
